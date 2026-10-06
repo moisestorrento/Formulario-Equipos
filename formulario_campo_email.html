@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Equipos - AES CLESA</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 10px;
@@ -88,7 +87,6 @@
             border-radius: 8px;
             font-size: 16px;
             font-family: inherit;
-            transition: border-color 0.2s;
         }
 
         input[type="text"]:focus,
@@ -114,7 +112,7 @@
             padding: 14px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -130,11 +128,6 @@
             transform: scale(0.98);
         }
 
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
         .btn-download {
             background: #10b981;
             color: white;
@@ -142,11 +135,6 @@
 
         .btn-download:active {
             background: #059669;
-        }
-
-        .btn-download:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
 
         .btn-clear {
@@ -158,19 +146,14 @@
             background: #e5e7eb;
         }
 
-        .btn-send-email {
+        .btn-email {
             background: #f59e0b;
             color: white;
             grid-column: 1 / -1;
         }
 
-        .btn-send-email:active {
+        .btn-email:active {
             background: #d97706;
-        }
-
-        .btn-send-email:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
 
         .success-message {
@@ -220,34 +203,6 @@
             border-left: 4px solid #f59e0b;
         }
 
-        .email-section label {
-            margin-bottom: 8px;
-        }
-
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            color: #667eea;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #f3f4f6;
-            border-top: 2px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .info-box {
             background: #dbeafe;
             border-left: 4px solid #3b82f6;
@@ -279,7 +234,7 @@
 
         <div class="content">
             <div class="info-box">
-                ℹ️ <strong>Instrucciones:</strong> Llena el formulario y guarda los registros. Luego descarga o envía por email.
+                📝 Llena el formulario, guarda los registros y descarga.
             </div>
 
             <div class="records-count">
@@ -291,52 +246,42 @@
             </div>
 
             <div class="error-message" id="errorMessage">
-                ✗ Error: <span id="errorText"></span>
-            </div>
-
-            <div class="loading-spinner" id="loadingSpinner">
-                <span class="spinner"></span> Procesando...
+                ✗ <span id="errorText"></span>
             </div>
 
             <form id="equipmentForm">
-                <!-- EMAIL CONFIGURATION -->
+                <!-- EMAIL -->
                 <div class="email-section">
-                    <label for="adminEmail">📧 Tu correo para recibir los datos</label>
-                    <input type="email" id="adminEmail" placeholder="Ej: tu@email.com">
-                    <small style="color: #666; margin-top: 6px; display: block;">Recibirás automáticamente el Excel actualizado</small>
+                    <label for="adminEmail">📧 Tu correo</label>
+                    <input type="email" id="adminEmail" placeholder="tu@email.com">
                 </div>
 
                 <!-- INSTALADORES -->
                 <div class="form-section">
                     <h2>Instaladores</h2>
-                    
                     <div class="form-group">
                         <label for="installer1Name">Instalador 1 (Nombre)</label>
-                        <input type="text" id="installer1Name" placeholder="Ej: Juan Pérez">
+                        <input type="text" id="installer1Name" placeholder="Juan Pérez">
                     </div>
-
                     <div class="form-group">
                         <label for="installer1Code">Instalador 1 (Código Arnés)</label>
-                        <input type="text" id="installer1Code" placeholder="Ej: AR-001">
+                        <input type="text" id="installer1Code" placeholder="AR-001">
                     </div>
-
                     <div class="form-group">
                         <label for="installer2Name">Instalador 2 (Nombre)</label>
-                        <input type="text" id="installer2Name" placeholder="Ej: Carlos López">
+                        <input type="text" id="installer2Name" placeholder="Carlos López">
                     </div>
-
                     <div class="form-group">
                         <label for="installer2Code">Instalador 2 (Código Arnés)</label>
-                        <input type="text" id="installer2Code" placeholder="Ej: AR-002">
+                        <input type="text" id="installer2Code" placeholder="AR-002">
                     </div>
                 </div>
 
                 <!-- ESCALERA -->
                 <div class="form-section">
                     <h2>Escalera</h2>
-                    
                     <div class="form-group">
-                        <label for="ladderSize">Tamaño Escalera</label>
+                        <label for="ladderSize">Tamaño</label>
                         <select id="ladderSize">
                             <option value="">Seleccionar...</option>
                             <option value='16"'>16"</option>
@@ -346,54 +291,46 @@
                             <option value='32"'>32"</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="ladderSerial">Correlativo</label>
-                        <input type="text" id="ladderSerial" placeholder="Ej: ESC-001">
+                        <input type="text" id="ladderSerial" placeholder="ESC-001">
                     </div>
-
                     <div class="form-group">
-                        <label for="ladderAsset">Activo Fijo y Equipo</label>
-                        <input type="text" id="ladderAsset" placeholder="Ej: AF-2024-001">
+                        <label for="ladderAsset">Activo Fijo</label>
+                        <input type="text" id="ladderAsset" placeholder="AF-2024-001">
                     </div>
                 </div>
 
                 <!-- EQUIPOS -->
                 <div class="form-section">
                     <h2>Herramientas</h2>
-                    
                     <div class="form-group">
-                        <label for="nicopresadora">Nicopresadora (Código Activo Fijo)</label>
-                        <input type="text" id="nicopresadora" placeholder="Ej: AF-2024-050">
+                        <label for="nicopresadora">Nicopresadora</label>
+                        <input type="text" id="nicopresadora" placeholder="AF-2024-050">
                     </div>
-
                     <div class="form-group">
-                        <label for="taladro">Taladro (Código Activo Fijo)</label>
-                        <input type="text" id="taladro" placeholder="Ej: AF-2024-051">
+                        <label for="taladro">Taladro</label>
+                        <input type="text" id="taladro" placeholder="AF-2024-051">
                     </div>
-
                     <div class="form-group">
-                        <label for="extintor">Extintor (Número)</label>
-                        <input type="text" id="extintor" placeholder="Ej: EXT-001">
+                        <label for="extintor">Extintor</label>
+                        <input type="text" id="extintor" placeholder="EXT-001">
                     </div>
                 </div>
 
-                <!-- EQUIPOS DE PROTECCIÓN -->
+                <!-- PROTECCIÓN -->
                 <div class="form-section">
                     <h2>Equipos de Protección</h2>
-                    
                     <div class="form-group">
-                        <label for="guanteClase0">Guante Clase 0 (Código)</label>
-                        <input type="text" id="guanteClase0" placeholder="Ej: GC0-001">
+                        <label for="guanteClase0">Guante Clase 0</label>
+                        <input type="text" id="guanteClase0" placeholder="GC0-001">
                     </div>
-
                     <div class="form-group">
-                        <label for="guanteClase3">Guante Clase 3 (Código)</label>
-                        <input type="text" id="guanteClase3" placeholder="Ej: GC3-001">
+                        <label for="guanteClase3">Guante Clase 3</label>
+                        <input type="text" id="guanteClase3" placeholder="GC3-001">
                     </div>
-
                     <div class="form-group">
-                        <label for="nextTestDate">Fecha Próxima Prueba</label>
+                        <label for="nextTestDate">Próxima Prueba</label>
                         <input type="date" id="nextTestDate">
                     </div>
                 </div>
@@ -402,42 +339,46 @@
                 <div class="form-section">
                     <div class="form-group">
                         <label for="notes">Observaciones</label>
-                        <input type="text" id="notes" placeholder="Ej: Revisar escalera después de uso">
+                        <input type="text" id="notes" placeholder="Notas adicionales">
                     </div>
                 </div>
 
                 <!-- BOTONES -->
                 <div class="button-group">
-                    <button type="button" class="btn-clear" onclick="clearForm()">Limpiar</button>
-                    <button type="submit" class="btn-submit">Guardar Registro</button>
-                    <button type="button" class="btn-download" onclick="downloadExcel()">📥 Descargar Excel</button>
-                    <button type="button" class="btn-send-email" id="sendEmailBtn" onclick="sendEmailWithExcel()">📧 Enviar por Email</button>
+                    <button type="button" class="btn-clear" onclick="limpiar()">Limpiar</button>
+                    <button type="submit" class="btn-submit">Guardar</button>
+                    <button type="button" class="btn-download" onclick="descargarCSV()">Descargar CSV</button>
+                    <button type="button" class="btn-email" onclick="enviarEmail()">Enviar Email</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // LocalStorage key
         const STORAGE_KEY = 'equipmentRecords';
 
-        // Load records on page load
-        function loadRecords() {
-            updateRecordCount();
-            // Load saved email if exists
-            const savedEmail = localStorage.getItem('adminEmail');
-            if (savedEmail) {
-                document.getElementById('adminEmail').value = savedEmail;
-            }
-        }
-
-        // Update record count display
-        function updateRecordCount() {
+        function actualizarConteo() {
             const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             document.getElementById('recordCount').textContent = records.length;
         }
 
-        // Handle form submission
+        function mostrarMensaje(tipo, texto) {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (tipo === 'success') {
+                successMsg.textContent = '✓ ' + texto;
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+                setTimeout(() => successMsg.style.display = 'none', 3000);
+            } else {
+                document.getElementById('errorText').textContent = texto;
+                errorMsg.style.display = 'block';
+                successMsg.style.display = 'none';
+                setTimeout(() => errorMsg.style.display = 'none', 5000);
+            }
+        }
+
         document.getElementById('equipmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -459,23 +400,18 @@
                 notes: document.getElementById('notes').value
             };
 
-            // Save to localStorage
             const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             records.push(record);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 
-            // Show success message
-            showSuccess('Registro guardado correctamente');
+            localStorage.setItem('adminEmail', document.getElementById('adminEmail').value);
 
-            // Clear form but keep email
-            clearForm();
-
-            // Update count
-            updateRecordCount();
+            mostrarMensaje('success', 'Registro guardado');
+            limpiar();
+            actualizarConteo();
         });
 
-        // Clear form
-        function clearForm() {
+        function limpiar() {
             document.getElementById('equipmentForm').reset();
             const savedEmail = localStorage.getItem('adminEmail');
             if (savedEmail) {
@@ -483,159 +419,98 @@
             }
         }
 
-        // Show success message
-        function showSuccess(message) {
-            const successMsg = document.getElementById('successMessage');
-            successMsg.textContent = '✓ ' + message;
-            successMsg.style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            setTimeout(() => {
-                successMsg.style.display = 'none';
-            }, 3000);
-        }
-
-        // Show error message
-        function showError(message) {
-            const errorMsg = document.getElementById('errorMessage');
-            document.getElementById('errorText').textContent = message;
-            errorMsg.style.display = 'block';
-            document.getElementById('successMessage').style.display = 'none';
-            setTimeout(() => {
-                errorMsg.style.display = 'none';
-            }, 5000);
-        }
-
-        // Generate Excel blob
-        function generateExcelBlob() {
+        function descargarCSV() {
             const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-
+            
             if (records.length === 0) {
-                showError('No hay registros para descargar');
-                return null;
+                mostrarMensaje('error', 'No hay registros para descargar');
+                return;
             }
 
-            const data = records.map(record => ({
-                'Fecha': new Date(record.timestamp).toLocaleDateString('es-ES'),
-                'Hora': new Date(record.timestamp).toLocaleTimeString('es-ES'),
-                'Instalador 1': record.installer1Name,
-                'Código Arnés 1': record.installer1Code,
-                'Instalador 2': record.installer2Name,
-                'Código Arnés 2': record.installer2Code,
-                'Tamaño Escalera': record.ladderSize,
-                'Correlativo Escalera': record.ladderSerial,
-                'Activo Fijo Escalera': record.ladderAsset,
-                'Nicopresadora': record.nicopresadora,
-                'Taladro': record.taladro,
-                'Extintor': record.extintor,
-                'Guante Clase 0': record.guanteClase0,
-                'Guante Clase 3': record.guanteClase3,
-                'Próxima Prueba': record.nextTestDate,
-                'Observaciones': record.notes
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Registros');
-
-            ws['!cols'] = [
-                { wch: 12 }, { wch: 12 }, { wch: 18 }, { wch: 14 },
-                { wch: 18 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
-                { wch: 16 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
-                { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 20 }
+            // Encabezados
+            const headers = [
+                'Fecha', 'Hora', 'Instalador 1', 'Código 1', 'Instalador 2', 'Código 2',
+                'Escalera', 'Serial Escalera', 'Activo Escalera', 'Nicopresadora', 
+                'Taladro', 'Extintor', 'Guante Clase 0', 'Guante Clase 3', 'Próxima Prueba', 'Observaciones'
             ];
 
-            return XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        }
-
-        // Download as Excel
-        function downloadExcel() {
-            const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            if (records.length === 0) {
-                showError('No hay registros para descargar');
-                return;
-            }
-
-            try {
-                const excelBlob = generateExcelBlob();
-                if (!excelBlob) return;
-
-                const blob = new Blob([excelBlob], { type: 'application/octet-stream' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `Equipos_${new Date().toLocaleDateString('es-ES')}.xlsx`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-                
-                showSuccess('Excel descargado correctamente');
-            } catch (error) {
-                showError('Error al descargar: ' + error.message);
-            }
-        }
-
-        // Send Excel by email
-        function sendEmailWithExcel() {
-            const adminEmail = document.getElementById('adminEmail').value;
+            // Datos
+            let csv = headers.join(',') + '\n';
             
-            if (!adminEmail) {
-                showError('Por favor ingresa tu correo electrónico');
+            records.forEach(r => {
+                const fecha = new Date(r.timestamp).toLocaleDateString('es-ES');
+                const hora = new Date(r.timestamp).toLocaleTimeString('es-ES');
+                
+                const fila = [
+                    fecha,
+                    hora,
+                    r.installer1Name || '',
+                    r.installer1Code || '',
+                    r.installer2Name || '',
+                    r.installer2Code || '',
+                    r.ladderSize || '',
+                    r.ladderSerial || '',
+                    r.ladderAsset || '',
+                    r.nicopresadora || '',
+                    r.taladro || '',
+                    r.extintor || '',
+                    r.guanteClase0 || '',
+                    r.guanteClase3 || '',
+                    r.nextTestDate || '',
+                    r.notes || ''
+                ];
+                
+                csv += fila.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+
+            // Descargar
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Equipos_${new Date().toLocaleDateString('es-ES')}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            mostrarMensaje('success', 'CSV descargado');
+        }
+
+        function enviarEmail() {
+            const email = document.getElementById('adminEmail').value;
+            
+            if (!email) {
+                mostrarMensaje('error', 'Ingresa tu correo');
                 return;
             }
 
-            // Validate email
-            if (!adminEmail.includes('@')) {
-                showError('Por favor ingresa un correo válido');
+            if (!email.includes('@')) {
+                mostrarMensaje('error', 'Correo inválido');
                 return;
             }
 
             const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             if (records.length === 0) {
-                showError('No hay registros para enviar');
+                mostrarMensaje('error', 'No hay registros');
                 return;
             }
 
-            // Save email
-            localStorage.setItem('adminEmail', adminEmail);
-
-            // Show loading state
-            const sendBtn = document.getElementById('sendEmailBtn');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            sendBtn.disabled = true;
-            loadingSpinner.style.display = 'block';
-
-            try {
-                // Generate Excel
-                const excelBlob = generateExcelBlob();
-                const blob = new Blob([excelBlob], { type: 'application/octet-stream' });
-                
-                // Create FormData
-                const formData = new FormData();
-                formData.append('file', blob, `Equipos_${new Date().toLocaleDateString('es-ES')}.xlsx`);
-                formData.append('email', adminEmail);
-                formData.append('records_count', records.length);
-                formData.append('date', new Date().toLocaleDateString('es-ES'));
-
-                // Send using a simple mailto link with attachment info
-                // Since we can't send directly from the browser, we'll provide the file for download
-                // and instructions to email it manually
-                
-                showSuccess(`✓ Excel generado. Descárgalo y envíalo a ${adminEmail}`);
-                downloadExcel(); // Auto-download the file
-                
-                sendBtn.disabled = false;
-                loadingSpinner.style.display = 'none';
-
-            } catch (error) {
-                showError('Error: ' + error.message);
-                sendBtn.disabled = false;
-                loadingSpinner.style.display = 'none';
-            }
+            // Generar CSV
+            descargarCSV();
+            
+            // Mostrar instrucciones
+            mostrarMensaje('success', `Archivo descargado. Envíalo a: ${email}`);
         }
 
-        // Initialize on page load
-        loadRecords();
+        // Iniciar
+        actualizarConteo();
+        const savedEmail = localStorage.getItem('adminEmail');
+        if (savedEmail) {
+            document.getElementById('adminEmail').value = savedEmail;
+        }
     </script>
 </body>
 </html>
